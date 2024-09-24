@@ -1,0 +1,8 @@
+.venv/
+.idea/
+.gitattributes/
+attendance.csv
+face_trainer.yml
+__pycache__/train.cpython-312.pyc
+/dataset
+.gitattributes
