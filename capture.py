@@ -56,7 +56,10 @@ def capture_face_images(name):
                     blink_count = 0  # Reset blink count
 
         if elapsed_time > timedelta(seconds=10):
-            capturing = True
+            if not capturing:
+                capturing = True
+        else:
+            print(elapsed_time)
 
         # Capture images if in capturing mode
         if capturing:
