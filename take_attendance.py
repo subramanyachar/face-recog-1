@@ -9,7 +9,7 @@ def mark_attendance(name):
     """Marks attendance in an Excel or CSV file."""
     now = datetime.now()
     time_string = now.strftime('%H:%M:%S')
-    date_string = now.strftime('%Y-%m-%d')
+    date_string = now.strftime('%d-%m-%Y')
 
     # Load or create the attendance file
     try:
