@@ -1,5 +1,6 @@
 import cv2
 import os
+from datetime import datetime, timedelta
 
 def capture_face_images(name):
     # Open video capture
@@ -7,6 +8,8 @@ def capture_face_images(name):
 
     # Create directory for storing images
     os.makedirs(f'dataset/{name}', exist_ok=True)
+
+    start_time = datetime.now()
 
     count = 0
     eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -19,6 +22,9 @@ def capture_face_images(name):
         ret, frame = cap.read()
         if not ret:
             break
+
+        current_time = datetime.now()
+        elapsed_time = current_time - start_time
 
         # Convert to grayscale
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -49,6 +55,9 @@ def capture_face_images(name):
                     last_eye_state = False
                     blink_count = 0  # Reset blink count
 
+        if elapsed_time > timedelta(seconds=10):
+            capturing = True
+
         # Capture images if in capturing mode
         if capturing:
             # Capture image
@@ -57,7 +66,7 @@ def capture_face_images(name):
             print(f'Image {count} captured!')
 
             # Stop capturing after 10 images
-            if count >= 10:
+            if count >= 30:
                 break
 
         # Show frame

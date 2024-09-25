@@ -53,7 +53,7 @@ while True:
         name = label_map.get(label, "Unknown")
 
         # Mark attendance if confidence is above a certain threshold
-        if confidence < 100:
+        if confidence < 60:
             mark_attendance(name)
             cv2.putText(frame, f'{name} ({confidence:.2f})', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
         else:
