@@ -3,3 +3,9 @@
 .gitattributes/
 __pycache__/train.cpython-312.pyc
 .gitattributes
+dataset/
+face_trainer.yml
+attendance.csv
+attendance.csv
+face_trainer.yml
+face_trainer.yml

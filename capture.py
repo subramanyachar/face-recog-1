@@ -1,7 +1,12 @@
-import cv2
+import tkinter as tk
+from tkinter import messagebox
+import subprocess
 import os
+import cv2
 from datetime import datetime, timedelta
 
+
+# Function to capture face images
 def capture_face_images(name):
     # Open video capture
     cap = cv2.VideoCapture(0)
@@ -55,11 +60,11 @@ def capture_face_images(name):
                     last_eye_state = False
                     blink_count = 0  # Reset blink count
 
-        if elapsed_time > timedelta(seconds=10):
             if not capturing:
-                capturing = True
-        else:
-            print(elapsed_time)
+                if elapsed_time > timedelta(seconds=10):
+                    capturing = True
+                else:
+                    print(elapsed_time)
 
         # Capture images if in capturing mode
         if capturing:
@@ -68,7 +73,7 @@ def capture_face_images(name):
             cv2.imwrite(f'dataset/{name}/{name}_{count}.jpg', roi_gray)
             print(f'Image {count} captured!')
 
-            # Stop capturing after 10 images
+            # Stop capturing after 30 images
             if count >= 30:
                 break
 
@@ -82,6 +87,85 @@ def capture_face_images(name):
     cap.release()
     cv2.destroyAllWindows()
 
-name = input("Enter the user Name: ")
-# Capture images for a person
-capture_face_images(name)
+
+# Function to open a new window for capturing images
+def open_capture_window():
+    # Create a new window for capturing images
+    capture_window = tk.Toplevel(root)
+    capture_window.title("Capture Images")
+    capture_window.geometry("300x150")
+
+    # Label and entry for the name
+    name_label = tk.Label(capture_window, text="Enter Name:")
+    name_label.pack(pady=5)
+
+    name_entry = tk.Entry(capture_window, width=30)
+    name_entry.pack(pady=5)
+
+    # Function to capture images when button is clicked
+    def capture_images():
+        name = name_entry.get().strip()  # Get the name from the entry widget
+
+        if not name:  # Check if the name is empty
+            messagebox.showwarning("Input Error", "Please enter a name.")
+            return
+
+        try:
+            # Call the function to capture images with the entered name
+            capture_face_images(name)
+            messagebox.showinfo("Success", f"Images captured successfully for {name}!")
+            capture_window.destroy()  # Close the capture window after success
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to capture images: {e}")
+
+    # Create and place the capture button in the new window
+    capture_button = tk.Button(capture_window, text="Capture", command=capture_images)
+    capture_button.pack(pady=20)
+
+
+# Function to train the model
+def train_model():
+    try:
+        # This will execute the training script using subprocess
+        subprocess.run(['python', 'train.py'])
+        messagebox.showinfo("Success", "Model trained successfully!")
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to train the model: {e}")
+
+
+# Function to mark attendance
+def take_attendance():
+    try:
+        # This will execute the take_attendance script using subprocess
+        subprocess.run(['python', 'take_attendance.py'])
+        messagebox.showinfo("Success", "Attendance marked successfully!")
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to mark attendance: {e}")
+
+
+# Function to view the attendance CSV
+def view_attendance():
+    if os.path.exists('attendance.csv'):
+        os.system('start excel attendance.csv')  # For Windows to open CSV in Excel
+    else:
+        messagebox.showinfo("Error", "Attendance file not found!")
+
+
+root = tk.Tk()
+root.title("Face Recognition Attendance System")
+
+root.geometry("400x300")
+
+capture_button = tk.Button(root, text="Capture Images", width=25, command=open_capture_window)
+capture_button.pack(pady=20)
+
+train_button = tk.Button(root, text="Train Model", width=25, command=train_model)
+train_button.pack(pady=20)
+
+attendance_button = tk.Button(root, text="Mark Attendance", width=25, command=take_attendance)
+attendance_button.pack(pady=20)
+
+view_button = tk.Button(root, text="View Attendance", width=25, command=view_attendance)
+view_button.pack(pady=20)
+
+root.mainloop()
